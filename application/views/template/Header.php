@@ -15,8 +15,6 @@
 		<link rel="stylesheet" href="<?php echo base_url(). 'assets/css/buttons.css'?>" />
 		<link rel="stylesheet" href="<?php echo base_url(). 'assets/css/styles.css'?>" />
 		<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
-		<?php if(basename($_SERVER['REQUEST_URI']) == 'dasbor.php?p=dbwp'){echo '<link rel="stylesheet" href="assets/css/select2.css" />'; echo '<link rel="stylesheet" href="assets/css/uniform.css" />'; echo '<link rel="stylesheet" href="assets/css/datatables.css" />';}else { echo ''; } ?>
-		<?php if(basename($_SERVER['REQUEST_URI']) == 'tam2.php'){echo '<link rel="stylesheet" href="assets/css/styles.css" />'; }else { echo ''; } ?>
 		<script src="<?php echo base_url(). 'assets/js/jquery.min.js'?>"></script>
 	</head>
 	<body>

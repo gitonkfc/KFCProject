@@ -61,8 +61,10 @@
                             <fieldset>
                                 <div class="control-group">
                                     <div class="controls radio-group">
+
                                         <?php foreach($jenis_pelayanan as $pelayanan){ ?>
-                                        <label class="button turquoise not-active"><span><?php echo $pelayanan['no_pel'];?></span><?php echo $pelayanan['nama_pel'];?> <input type="radio" id="no_pel" name="no_pel" value="<?php echo $pelayanan['nama_pel'];?>"></label>
+                                        <label class="button turquoise not-active">
+                                            <span><?php echo $pelayanan['no_pel'];?></span><?php echo $pelayanan['nama_pel'];?> <input type="radio" id="no_pel" name="no_pel" value="<?php echo $pelayanan['nama_pel'];?>"></label>
                                         <?php }?>
                                     </div>
                                 </div>
@@ -144,4 +146,5 @@
   return true;
 }
 </script>
+
 <?php $this->load->view('template/Footer');?>
