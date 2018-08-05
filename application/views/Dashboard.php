@@ -1,5 +1,5 @@
-<?php $this->load->view('template/header')?>
-<?php $this->load->view('template/nav')?>
+<?php $this->load->view('template/Header')?>
+<?php $this->load->view('template/Nav')?>
 <!--main-container-part-->
 <div id="content">
 <!--breadcrumbs-->
@@ -28,4 +28,4 @@
     </div>
   </div>
 </div>
-<?php $this->load->view('template/footer')?>
+<?php $this->load->view('template/Footer')?>

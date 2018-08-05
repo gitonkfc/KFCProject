@@ -125,5 +125,4 @@ jQuery(document).ready(function() {
         $(this).removeClass('not-active').siblings().addClass('not-active');
         });
     });
-
-}):
+});

@@ -1,5 +1,5 @@
-<?php $this->load->view('template/header');?>
-<?php $this->load->view('template/nav');?>
+<?php $this->load->view('template/Header');?>
+<?php $this->load->view('template/Nav');?>
 <!--main-container-part-->
 <div id="content">
     <!--breadcrumbs-->
@@ -14,9 +14,8 @@
                 <div class="widget-box">
                     <div class="widget-title">
                         <h5>Form Pendaftaran Wajib Pajak Baru</h5>
-                    </div>
-                    <div class="widget-content nopadding">
-                        <form action="dasbor.php?p=simpan" method="post" class="form-horizontal" id="WPForm">
+                    </div>                     <div class="widget-content nopadding">
+                        <form action="<?php echo base_url(). 'tambah/simpan'?>" method="post" class="form-horizontal" id="WPForm">
                             <fieldset> <!-- First Page Form -->
                             <div class="control-group">
                                 <label class="control-label">Nama Lengkap</label>
@@ -45,13 +44,13 @@
                             <div class="control-group">
                                 <label class="control-label">Kode Pos</label>
                                 <div class="controls">
-                                    <input type="text" name="kodepos" id="kodepos" class="form-control" placeholder="75683">
+                                    <input type="text" onkeypress="return hanyaAngka(event)" maxlength="5" name="kodepos" id="kodepos" class="form-control" placeholder="75683">
                                 </div>
                             </div>
                             <div class="control-group">
                                 <label class="control-label">No. Handphone</label>
                                 <div class="controls">
-                                    <input type="tel" name="phone" id="phone" class="form-control" placeholder="Nomor telpon anda"/>
+                                    <input type="tel" onkeypress="return hanyaAngka(event)" maxlength="12" name="phone" id="phone" class="form-control" placeholder="Nomor telpon anda"/>
                                 </div>
                             </div>
                             <div class="wizard-buttons">
@@ -121,7 +120,7 @@
                                     <div class="finals">
                                         <button type="button" class="btn btn-primary btn-large">Cetak</button>
                                         <button type="button" class="btn btn-previous btn-large">Mundur</button>
-                                        <button type="submit" name="save" class="btn btn-large btn-primary btn-submit">Submit</button>
+                                        <input type="submit" name="save" class="btn btn-large btn-primary btn-submit">Submit</button>
                                     </div>
                                 </div>
                             </div>
@@ -136,4 +135,13 @@
 </div>
 </div>
 </div>
-<?php $this->load->view('template/footer');?>
+<script type="text/javascript">
+    function hanyaAngka(evt) {
+  var charCode = (evt.which) ? evt.which : event.keyCode
+  if (charCode > 31 && (charCode < 48 || charCode > 57))
+
+    return false;
+  return true;
+}
+</script>
+<?php $this->load->view('template/Footer');?>

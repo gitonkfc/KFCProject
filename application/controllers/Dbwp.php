@@ -6,12 +6,12 @@ class Dbwp extends CI_Controller
 	public function __construct() 
 	{
         Parent::__construct();
-        $this->load->model("dbwp_model");
+        $this->load->model("Dbwp_model");
     }
 
      public function index()
      {
-          $this->load->view("dbwp", array());
+          $this->load->view("Dbwp", array());
      }
 
      public function data_wp()
@@ -23,7 +23,7 @@ class Dbwp extends CI_Controller
           $length = intval($this->input->get("length"));
 
 
-          $data_wp = $this->dbwp_model->getdata_wp();
+          $data_wp = $this->Dbwp_model->getdata_wp();
 
           $data = array();
 

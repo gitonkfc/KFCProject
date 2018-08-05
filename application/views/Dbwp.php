@@ -1,5 +1,5 @@
-<?php $this->load->view('template/header');?>
-<?php $this->load->view('template/nav');?>
+<?php $this->load->view('template/Header');?>
+<?php $this->load->view('template/Nav');?>
 <div id="content">
   <div id="content-header">
     <div id="breadcrumb"> <a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a href="#" class="current">Tables</a> </div>
@@ -46,4 +46,4 @@ $(document).ready(function() {
     });
 });
 </script>
-<? $this->load->view('template/footer');?>
+<? $this->load->view('template/Footer');?>

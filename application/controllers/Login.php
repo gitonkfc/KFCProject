@@ -4,12 +4,21 @@ class Login extends CI_Controller
 	function __construct()
 	{
 		parent::__construct();
-		$this->load->model('login_model');
+		$this->load->model('Login_model');
 	}
 
 	function index()
 	{
-		$this->load->view('login');
+		$sess_id = $this->session->userdata('nama_u');
+		if(!empty($sess_id))
+		{
+			redirect(site_url().'Dashboard');
+
+   		}
+   		else
+   		{
+        	$this->load->view('Login');        
+   		}   
 	}
 
 
@@ -17,14 +26,14 @@ class Login extends CI_Controller
 	{
 		$username=htmlspecialchars($this->input->post('username',TRUE),ENT_QUOTES);
 		$password=htmlspecialchars($this->input->post('password',TRUE),ENT_QUOTES);
-		$cek_level=$this->login_model->auth($username,$password);
+		$cek_level=$this->Login_model->auth($username,$password);
 		if($cek_level->num_rows() > 0)
 			{ 
 				$data=$cek_level->row_array();
 				$this->session->sess_expiration = '1800';
 				$this->session->set_userdata('level',$data['level']);
 				$this->session->set_userdata('nama_u',$data['nama_depan']);
-				redirect('dashboard');
+				redirect('Dashboard');
 			} 
 		else 
 			{ 
