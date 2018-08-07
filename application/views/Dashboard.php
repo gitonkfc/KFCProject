@@ -1,5 +1,3 @@
-<?php $this->load->view('template/Header')?>
-<?php $this->load->view('template/Nav')?>
 <!--main-container-part-->
 <div id="content">
 <!--breadcrumbs-->

@@ -1,5 +1,5 @@
 <?php
-class Dashboard extends CI_Controller
+class Dashboard extends MY_Controller
 {
   
   function __construct()

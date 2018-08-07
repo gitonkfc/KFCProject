@@ -1,20 +1,20 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Dbwp extends MY_Controller
+class Dbpetugas extends MY_Controller
 {
 
-	public function __construct() 
-	{
+  public function __construct() 
+  {
         Parent::__construct();
-        $this->load->model("Dbwp_model");
+        $this->load->model("Dbpetugas_model");
     }
 
      public function index()
      {
-          $this->load->view("Dbwp", array());
+          $this->load->view("Dbpetugas", array());
      }
 
-     public function data_wp()
+     public function data_petugas()
      {
 
           // Datatables Variables
@@ -23,28 +23,26 @@ class Dbwp extends MY_Controller
           $length = intval($this->input->get("length"));
 
 
-          $data_wp = $this->Dbwp_model->getdata_wp();
+          $data_petugas = $this->Dbpetugas_model->getdata_petugas();
 
           $data = array();
 
-          foreach($data_wp->result() as $r) {
+          foreach($data_petugas->result() as $r) {
 
                $data[] = array(
-                    $r->nama,
-                    $r->alamat,
-                    $r->kota,
-                    $r->kodepos,
-                    $r->nohp,
-                    $r->no_pel,
-                    $r->date
+                    $r->nama_depan,
+                    $r->nama_belakang,
+                    $r->username,
+                    $r->level,
+                    $r->nip
 
                 );
           }
 
           $output = array(
                "draw" => $draw,
-                 "recordsTotal" => $data_wp->num_rows(),
-                 "recordsFiltered" => $data_wp->num_rows(),
+                 "recordsTotal" => $data_petugas->num_rows(),
+                 "recordsFiltered" => $data_petugas->num_rows(),
                  "data" => $data
             );
           echo json_encode($output);

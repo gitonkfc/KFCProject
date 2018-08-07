@@ -1,5 +1,3 @@
-<?php $this->load->view('template/Header');?>
-<?php $this->load->view('template/Nav');?>
 <!--main-container-part-->
 <div id="content">
     <!--breadcrumbs-->
@@ -137,14 +135,6 @@
 </div>
 </div>
 </div>
-<script type="text/javascript">
-    function hanyaAngka(evt) {
-  var charCode = (evt.which) ? evt.which : event.keyCode
-  if (charCode > 31 && (charCode < 48 || charCode > 57))
 
-    return false;
-  return true;
-}
-</script>
 
 <?php $this->load->view('template/Footer');?>
