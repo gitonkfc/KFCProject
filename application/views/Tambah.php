@@ -120,7 +120,7 @@
                                     <div class="finals">
                                         <button type="button" class="btn btn-primary btn-large">Cetak</button>
                                         <button type="button" class="btn btn-previous btn-large">Mundur</button>
-                                        <input type="submit" name="save" class="btn btn-large btn-primary btn-submit">Submit</button>
+                                        <button type="submit" name="save" class="btn btn-large btn-primary btn-submit">Submit</button>
                                     </div>
                                 </div>
                             </div>

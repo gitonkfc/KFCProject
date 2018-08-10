@@ -6,6 +6,4 @@
   	<li>
     	<a href="<?php echo base_url(). 'dbwp'?>"><i class="icon icon-th"></i> <span>Database WP</span></a>
     </li>
-    <li>
       <?php echo $nav;?>
-    </li>

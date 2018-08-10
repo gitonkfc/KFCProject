@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class tambah extends MY_Controller
+class Tambah extends MY_Controller
 {
     function __construct()
     {
@@ -20,13 +20,18 @@ class tambah extends MY_Controller
         }
         else
         {
-            $this->load->view('Simpan');
+            $this->load->view('Login');
         }
 
      }
 
      public function simpan()
      {
+        $data = $this->Tambah_model->get_last_nolayan();
+        $no_l = $data['0']['maxKode'];
+        $no_u = (int) substr($no_l, 0, 3);
+        $no_u++;
+        $kode_layan = sprintf("%03s", $no_u);
         $name = $this->input->post('nama');
         $alamat = $this->input->post('alamat');
         $phone = $this->input->post('phone');
@@ -38,7 +43,7 @@ class tambah extends MY_Controller
 
         $data = array
         (
-            'no_layan'  => 20,
+            'no_layan'  => $kode_layan,
             'nama'      => $name,
             'alamat'    => $alamat,
             'nohp'      => $phone,

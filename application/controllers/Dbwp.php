@@ -11,7 +11,14 @@ class Dbwp extends MY_Controller
 
      public function index()
      {
-          $this->load->view("Dbwp", array());
+          if($this->session->userdata('level') == TRUE)
+          {
+            $this->load->view("Dbwp", array());
+          }          
+          else
+          {
+            $this->load->view('Login');
+          }
      }
 
      public function data_wp()

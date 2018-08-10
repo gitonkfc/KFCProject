@@ -11,7 +11,18 @@ class Dbpetugas extends MY_Controller
 
      public function index()
      {
-          $this->load->view("Dbpetugas", array());
+          if($this->session->userdata('level')=='manager')
+          {
+            $this->load->view("Dbpetugas", array());
+          }          
+          elseif ($this->session->userdata('level')=='karyawan') 
+          {
+            $this->load->view('Dashboard');
+          }
+          else
+          {
+            $this->load->view('Login');
+          }
      }
 
      public function data_petugas()
@@ -27,17 +38,19 @@ class Dbpetugas extends MY_Controller
 
           $data = array();
 
-          foreach($data_petugas->result() as $r) {
+          foreach($data_petugas->result() as $r) 
+          {
 
                $data[] = array(
                     $r->nama_depan,
                     $r->nama_belakang,
                     $r->username,
                     $r->level,
-                    $r->nip
-
+                    $r->nip,
+                    $r->edit = "<center><a href=" . base_url() . "dbpetugas/" . "edit/" . $r->id_akun . ">edit</a></center>"
                 );
           }
+
 
           $output = array(
                "draw" => $draw,
@@ -45,8 +58,14 @@ class Dbpetugas extends MY_Controller
                  "recordsFiltered" => $data_petugas->num_rows(),
                  "data" => $data
             );
-          echo json_encode($output);
+          echo json_encode($output, JSON_UNESCAPED_SLASHES);
           exit();
+     }
+     public function edit($id)
+     {
+        $where        = array('id_akun' => $id);
+        $data['user'] = $this->Dbpetugas_model->edit_data($where,'user')->result();
+        $this->load->view('Editpetugas',$data);
      }
 
 }

@@ -14,6 +14,13 @@ class Tambah_model extends CI_Model
      	$this->db->insert($table,$data);
      }
 
+     public function get_last_nolayan()
+     {
+     	$this->db->select_max('no_layan', 'maxKode');
+     	$query = $this->db->get('data_wp');
+     	return ($query->result_array());
+     }
+
 }
 
 ?>
