@@ -13,6 +13,7 @@
         <li class="bg_lg span3"> <a href="<?php echo base_url(). 'dbwp'?>"> <i class="icon-th"></i> Database Daftar Wajib Pajak</a> </li>
         <?php if($this->session->userdata('level')=='manager'):?>
         <li class="bg_lo span3"> <a href="<?php echo base_url(). 'Tambah'?>"> <i class="icon-th-list"></i> Pembuatan Form Baru </a> </li>
+                <li class="bg_lo span3"> <a href="<?php echo base_url(). 'Dbpetugas/Register_petugas'?>"> <i class="icon-th-list"></i> Registrasi Petugas </a> </li>
         <?php else:?>  
       </ul>
     </div>

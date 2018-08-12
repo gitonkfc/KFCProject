@@ -15,6 +15,7 @@
           <table id="petugas" class="table table-bordered table-striped">
             <thead>
               <tr>
+                <th>ID Akun</th>
                 <th>Nama Depan</th>
                 <th>Nama Belakang</th>
                 <th>Username</th>

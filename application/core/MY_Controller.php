@@ -13,7 +13,7 @@ class MY_Controller extends CI_Controller
     	}
     	elseif($this->session->userdata('level') == 'karyawan')
     	{
-      		$data['nav']  = '</ul></div>';
+      		$data['nav']  = "<li><a href=" . base_url() . "dbpetugas" . "><i class='icon icon-th'></i> <span>Daftar Petugas</span></a></li></ul></div>";
             $this->load->view('template/Header');
             $this->load->view('template/Nav', $data);
     	}

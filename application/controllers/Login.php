@@ -33,6 +33,7 @@ class Login extends CI_Controller
 				$this->session->sess_expiration = '1800';
 				$this->session->set_userdata('level',$data['level']);
 				$this->session->set_userdata('nama_u',$data['nama_depan']);
+				$this->session->set_userdata('id_akun',$data['id_akun']);
 				redirect('Dashboard');
 			} 
 		else 

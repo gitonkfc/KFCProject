@@ -11,27 +11,26 @@
             <div class="span12">
                 <div class="widget-box">
                     <div class="widget-title">
-                        <h5>Form Pendaftaran Wajib Pajak Baru</h5>
+                        <h5>Registrasi Petugas Pajak</h5>
                     </div>                     <div class="widget-content nopadding">
-                    	<?php foreach($user as $u){?>
-                        <form action="<?php echo base_url(). 'dbpetugas/update'?>" method="post" class="form-horizontal" id="WPForm">
+
+                        <form action="<?php echo base_url(). 'dbpetugas/simpan_petugas'?>" method="post" class="form-horizontal" id="WPForm">
                             <fieldset> <!-- First Page Form -->
                             	                            <div class="control-group">
                                 <label class="control-label">NIP</label>
                                 <div class="controls">
-                                	<input type="hidden" value="<?php echo($u->id_akun) ?>" onKeyup="ucfirst(this)" id="id_akun" name="id_akun" class="form-control"/>
-                                    <input type="text" value="<?php echo($u->nip) ?>" onKeyup="ucfirst(this)" id="nip" name="nip" class="form-control"/>
+                                    <input type="text" onKeyup="ucfirst(this)" id="nip" name="nip" class="form-control"/>
                                 </div>
                             <div class="control-group">
                                 <label class="control-label">Nama Depan</label>
                                 <div class="controls">
-                                    <input type="text" value="<?php echo $u->nama_depan ?>" onKeyup="ucfirst(this)" id="nama_depan" name="nama_depan" class="form-control"/>
+                                    <input type="text" onKeyup="ucfirst(this)" id="nama_depan" name="nama_depan" class="form-control"/>
                                 </div>
                             </div>
                                                         <div class="control-group">
                                 <label class="control-label">Nama Belakang</label>
                                 <div class="controls">
-                                    <input type="text" value="<?php echo $u->nama_belakang ?>" onKeyup="ucfirst(this)" id="nama_belakang" name="nama_belakang" class="form-control" placeholder="Nama Belakang"/>
+                                    <input type="text" onKeyup="ucfirst(this)" id="nama_belakang" name="nama_belakang" class="form-control" placeholder="Nama Belakang"/>
                                 </div>
                             </div>
                             <div class="control-group">
@@ -43,13 +42,13 @@
                             <div class="control-group">
                                 <label class="control-label">Jabatan</label>
                                 <div class="controls">
-                                    <input type="text" value="<?php echo $u->level ?>" name="level" id="level" class="form-control" placeholder="jabatan">
+                                    <input type="text" name="level" id="level" class="form-control" placeholder="jabatan">
                                 </div>
                             </div>
                             <div class="control-group">
                                 <label class="control-label">Username</label>
                                 <div class="controls">
-                                    <input type="text" value="<?php echo $u->username ?>" name="username" id="username" class="form-control" placeholder="username">
+                                    <input type="text" name="username" id="username" class="form-control" placeholder="username">
                                 </div>
                             </div>
 
