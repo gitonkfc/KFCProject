@@ -11,13 +11,13 @@ class Dbpetugas extends MY_Controller
 
      public function index()
      {
-          if($this->session->userdata('nama_u'))
+          if($this->is_logged_in())
           {
             $this->load->view("Dbpetugas", array());
           }          
           else
           {
-            $this->load->view('Login');
+            redirect('Login');
           }
      }
 
@@ -25,14 +25,21 @@ class Dbpetugas extends MY_Controller
      {
 
           // Datatables Variables
-          if($this->session->userdata('level')=='manager')
-          {
+
             $draw = intval($this->input->get("draw"));
             $start = intval($this->input->get("start"));
             $length = intval($this->input->get("length"));
 
+            if($this->session->userdata('level')=='manager')
+            {
+              $data_petugas = $this->Dbpetugas_model->getdata_petugas();
+            }
+            elseif ($this->session->userdata('level')=='karyawan') 
+            {
+              $where = array('nama_depan' => $this->session->userdata('nama_u'));
+              $data_petugas = $this->Dbpetugas_model->getdata_petugas_byname($where,'user');
+            }
 
-            $data_petugas = $this->Dbpetugas_model->getdata_petugas();
 
             $data = array();
 
@@ -40,7 +47,6 @@ class Dbpetugas extends MY_Controller
             {
 
               $data[] = array(
-                    $r->id_akun,
                     $r->nama_depan,
                     $r->nama_belakang,
                     $r->username,
@@ -59,50 +65,21 @@ class Dbpetugas extends MY_Controller
             );
             echo json_encode($output, JSON_UNESCAPED_SLASHES);
             exit(); 
-          }elseif($this->session->userdata('level')=='karyawan')
-          {
-            $draw = intval($this->input->get("draw"));
-            $start = intval($this->input->get("start"));
-            $length = intval($this->input->get("length"));
-            $where = array
-            (
-              'id_akun' => $this->session->userdata('id_akun')
-            );
-            $data_petugas = $this->Dbpetugas_model->getdata_petugas_byname($where,'user');
-
-            $data = array();
-
-            foreach($data_petugas->result() as $r) 
-            {
-
-              $data[] = array(
-                    $r->id_akun,
-                    $r->nama_depan,
-                    $r->nama_belakang,
-                    $r->username,
-                    $r->level,
-                    $r->nip,
-                    $r->edit = "<center><a href=" . base_url() . "dbpetugas/" . "edit/" . $r->id_akun . ">edit</a></center>"
-                );
-            }
-
-
-            $output = array(
-               "draw" => $draw,
-                 "recordsTotal" => $data_petugas->num_rows(),
-                 "recordsFiltered" => $data_petugas->num_rows(),
-                 "data" => $data
-            );
-            echo json_encode($output, JSON_UNESCAPED_SLASHES);
-            exit(); 
-          }
+         
 
      }
      public function edit($id)
      {
-        $where        = array('id_akun' => $id);
-        $data['user'] = $this->Dbpetugas_model->edit_data($where,'user')->result();
-        $this->load->view('Editpetugas',$data);
+        if($this->is_logged_in())
+        {
+          $where        = array('id_akun' => $id);
+          $data['user'] = $this->Dbpetugas_model->edit_data($where,'user')->result();
+          $this->load->view('Editpetugas',$data);
+        }
+        else
+        {
+          redirect('Login');
+        }
      }
 
      public function update()
@@ -129,9 +106,20 @@ class Dbpetugas extends MY_Controller
         (
           'id_akun' => $id
         );
- 
-        $this->Dbpetugas_model->update_data($where,$data,'user');
-        redirect('Dbpetugas');
+        if($level == 'karyawan' || $level == 'manager')
+        {
+            $this->Dbpetugas_model->update_data($where,$data,'user');
+            $data['button'] = "<a class='btn btn-primary btn-sm' href=" . base_url() . "dbpetugas/register_petugas" .  "role='button'> Register Petugas</a> <a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "dbpetugas" . ">Daftar Petugas</a>";
+            $data['output'] = "<h1 class='display-3'>Berhasil!</h1> <p class='lead'><strong>Update data petugas berhasil. </p>";
+        }
+        else
+        {
+          $data['output'] = "<h1 class='display-3'>Data Kurang Lengkap</h1> <p class='lead'><strong>Silahkan periksa kembali data yang diinput. </p>";
+          $data['button'] = "<a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "dbpetugas" . ">List Petugas</a> <a class='btn btn-primary btn-sm' href=". base_url() . "dbpetugas/" . "edit/" . $id . " role='button'>Input Ulang</a>";
+
+        }
+
+        return $this->load->view('Simpan',$data);
      }
 
      public function register_petugas()
@@ -140,7 +128,7 @@ class Dbpetugas extends MY_Controller
       {
         $this->load->view('Registrasi_petugas');
       }
-      elseif($this->session->userdata('level')=='manager')
+      elseif($this->session->userdata('level')=='karyawan')
       {
         redirect('Dashboard');
       }

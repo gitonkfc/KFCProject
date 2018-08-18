@@ -13,42 +13,44 @@
                     <div class="widget-title">
                         <h5>Form Pendaftaran Wajib Pajak Baru</h5>
                     </div>                     <div class="widget-content nopadding">
-                        <form action="<?php echo base_url(). 'dbwp/simpan'?>" method="post" class="form-horizontal" id="WPForm">
+                        <?php foreach($datawp as $data){?>
+                        <form action="<?php echo base_url(). 'dbwp/update'?>" method="post" class="form-horizontal" id="WPForm">
                             <fieldset> <!-- First Page Form -->
                             <div class="control-group">
                                 <label class="control-label">Nama Lengkap</label>
                                 <div class="controls">
-                                    <input type="text" onKeyup="ucfirst(this)" id="nama" name="nama" class="form-control" placeholder="Nama anda"/>
+                                    <input type="hidden" value="<?php echo $data->no_layan ?>"onKeyup="ucfirst(this)" id="no_layan" name="no_layan" class="form-control" placeholder="no_layan"/>
+                                    <input type="text" value="<?php echo $data->nama ?>"onKeyup="ucfirst(this)" id="nama" name="nama" class="form-control" placeholder="Nama anda"/>
                                 </div>
                             </div>
                             <div class="control-group">
                                 <label class="control-label">Alamat</label>
                                 <div class="controls">
-                                    <textarea name="alamat" onKeyup="ucfirst(this)" id="alamat" class="form-control" placeholder="Alamat anda"></textarea>
+                                    <textarea name="alamat" value="<?php echo $data->alamat?>" onKeyup="ucfirst(this)" id="alamat" class="form-control"><?php echo htmlspecialchars($data->alamat); ?></textarea>
                                 </div>
                             </div>
                             <div class="control-group">
                                 <label class="control-label">Kecamatan</label>
                                 <div class="controls">
-                                    <input type="text" name="kec" onKeyup="ucfirst(this)" id="kec" class="form-control" placeholder="Kecamatan">
+                                    <input type="text" name="kec" value="<?php echo $data->kecamatan?>"onKeyup="ucfirst(this)" id="kec" class="form-control" placeholder="Kecamatan">
                                 </div>
                             </div>
                             <div class="control-group">
                                 <label class="control-label">Kota</label>
                                 <div class="controls">
-                                    <input type="text" onKeyup="ucfirst(this)" name="kota" id="kota" class="form-control" placeholder="Kota">
+                                    <input type="text" value="<?php echo $data->kota?>"onKeyup="ucfirst(this)" name="kota" id="kota" class="form-control" placeholder="Kota">
                                 </div>
                             </div>
                             <div class="control-group">
                                 <label class="control-label">Kode Pos</label>
                                 <div class="controls">
-                                    <input type="text" onkeypress="return hanyaAngka(event)" maxlength="5" name="kodepos" id="kodepos" class="form-control" placeholder="75683">
+                                    <input type="text" value="<?php echo $data->kodepos?>"onkeypress="return hanyaAngka(event)" maxlength="5" name="kodepos" id="kodepos" class="form-control" placeholder="75683">
                                 </div>
                             </div>
                             <div class="control-group">
                                 <label class="control-label">No. Handphone</label>
                                 <div class="controls">
-                                    <input type="tel" onkeypress="return hanyaAngka(event)" maxlength="12" name="phone" id="phone" class="form-control" placeholder="Nomor telpon anda"/>
+                                    <input type="tel" value="<?php echo $data->nohp?>"onkeypress="return hanyaAngka(event)" maxlength="12" name="phone" id="phone" class="form-control" placeholder="Nomor telpon anda"/>
                                 </div>
                             </div>
                             <div class="wizard-buttons">
@@ -62,7 +64,7 @@
 
                                         <?php foreach($jenis_pelayanan as $pelayanan){ ?>
                                         <label class="button turquoise not-active">
-                                            <span><?php echo $pelayanan['no_pel'];?></span><?php echo $pelayanan['nama_pel'];?> <input type="radio" id="no_pel" name="no_pel" value="<?php echo $pelayanan['nama_pel'];?>"></label>
+                                            <span><?php echo $pelayanan['no_pel'];?></span><?php echo $pelayanan['nama_pel'];?> <input type="radio" id="no_pel" name="no_pel" value="<?php echo $pelayanan['nama_pel'];?>" checked="checked"></label>
                                         <?php }?>
                                     </div>
                                 </div>
@@ -126,6 +128,7 @@
                             </div>
                         </fieldset>
                     </form>
+                    <?php }?>
                 </fieldset>
             </form>
         </div>
@@ -135,6 +138,4 @@
 </div>
 </div>
 </div>
-
-
 <?php $this->load->view('template/Footer');?>

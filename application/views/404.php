@@ -9,9 +9,7 @@
 <!--Action boxes-->
   <div class="container-fluid">
     <div class="quick-actions_homepage">
-      <ul class="quick-actions">
-          <?php echo $nav;?>
-      </ul>
+     <div class="my404"> 404 this page does not exist</div>
     </div>
 
            </ul>

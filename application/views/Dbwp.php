@@ -22,6 +22,7 @@
                   <th>No. HP</th>
                   <th>Jenis Pelayanan</th>
                   <th>Tanggal Pelayanan</th>
+                  <th>Edit</th>
                 </tr>
               </thead>
               <tbody></tbody>
