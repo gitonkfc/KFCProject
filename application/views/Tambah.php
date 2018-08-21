@@ -118,9 +118,11 @@
                                         </div> -->
                                     </p>
                                     <div class="finals">
-                                        <button type="button" class="btn btn-primary btn-large">Cetak</button>
+                                    <div class="finals">
+                                        <input id="simpan" type="submit" value="Simpan" name = "simpan" class="btn btn-primary btn-large">
                                         <button type="button" class="btn btn-previous btn-large">Mundur</button>
-                                        <button type="submit" name="save" class="btn btn-large btn-primary btn-submit">Submit</button>
+                                        <input id="cetak" type="submit" value="Cetak" name = "cetak" class="btn btn-primary btn-large">
+                                    </div>
                                     </div>
                                 </div>
                             </div>

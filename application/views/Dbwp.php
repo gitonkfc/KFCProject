@@ -15,6 +15,7 @@
             <table id="wajibpajak" class="table table-bordered data-table">
               <thead>
                 <tr>
+                  <th>No Pelayanan</th>
                   <th>Nama</th>
                   <th>Alamat</th>
                   <th>Kota</th>
@@ -38,6 +39,7 @@
 <script type="text/javascript">
 $(document).ready(function() {
     $('#wajibpajak').DataTable({
+      "order" : [[7,"ASC"]],
         "ajax": {
             url : "<?php echo site_url("dbwp/data_wp") ?>",
             type : 'GET'

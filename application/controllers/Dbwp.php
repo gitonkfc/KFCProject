@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\Item;
+use Mike42\Escpos\PrintConnectors\CupsPrintConnector;
 class Dbwp extends MY_Controller
 {
 
@@ -37,6 +39,7 @@ class Dbwp extends MY_Controller
           foreach($data_wp->result() as $r) {
 
                $data[] = array(
+                    $r->no_layan,
                     $r->nama,
                     $r->alamat,
                     $r->kota,
@@ -72,6 +75,50 @@ class Dbwp extends MY_Controller
 
      }
 
+     private function cetak($data=[])
+     {
+
+          
+          $items = array 
+          (
+            new Item ('Nama', $data['nama']),
+            new Item ('Alamat', $data['alamat']),
+            new Item ('No Telepon', $data['nohp']),
+            new Item ('Kota', $data['kota']),
+            new Item ('Kecamatan', $data['kecamatan']),
+            new Item ('Kode Pos', $data['kodepos']),
+            new Item ('Nama Pelayanan', $data['no_pel']),
+            new Item ('Tanggal', $data['date'])
+          );
+
+          $connector = new CupsPrintConnector("Receiptprinter");
+          $printer = new Printer($connector);
+          $printer -> setJustification(Printer::JUSTIFY_CENTER);
+          $printer -> selectPrintMode(Printer::MODE_FONT_B);
+          $printer -> setEmphasis(true);
+          $printer -> text('PBB-P2 KUTAI TIMUR');
+          $printer -> setEmphasis(false);
+          $printer -> feed();
+          $printer -> setEmphasis(true);
+          $printer -> text('Data Wajib Pajak');
+          $printer -> setEmphasis(false);
+          $printer -> feed();
+          $printer -> setJustification(Printer::JUSTIFY_LEFT);
+          foreach ($items as $item)
+          {
+            $printer -> text($item);
+          }
+          $printer -> feed();
+          $printer -> setJustification(Printer::JUSTIFY_CENTER);
+          $printer -> text('TERIMAKASIH');
+          $printer -> feed();
+          $printer -> text('Untuk Info yang belum anda pahami silahkan hubungi pusat pelayanan lanjutan.');
+          $printer -> feed(2);
+          $printer -> cut();
+    
+          /* Close printer */
+          $printer -> close();
+     }
      public function simpan()
      {
         $data = $this->Dbwp_model->get_last_nolayan();
@@ -88,7 +135,7 @@ class Dbwp extends MY_Controller
         $no_pel = $this->input->post('no_pel');
         $date = date('Y-m-d H:i:s');
 
-        $data = array
+        $datas = array
         (
             'no_layan'  => $kode_layan,
             'nama'      => $name,
@@ -100,24 +147,45 @@ class Dbwp extends MY_Controller
             'no_pel'    => $no_pel,
             'date'      => $date
         );
-        
 
-        if(!$this->Dbwp_model->input_data($data,'data_wp'))
+        $outputf = "<h1 class='display-3'>Data Kurang Lengkap</h1> <p class='lead'><strong>Silahkan periksa kembali data yang diinput. </p>";
+        $buttonf = "<a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "dbwp/tambah" .  "> Pendaftaran Baru</a> <a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "Dashboard" . ">Menu Utama</a>";
+        $outputs = "<a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "dbwp/tambah" .  "> Pendaftaran Baru</a> <a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "Dashboard" . ">Menu Utama</a>";
+        $buttons = "<h1 class='display-3'>Terima Kasih!</h1> <p class='lead'><strong>Selamat Melayani.</strong> Untuk Info yang belum anda pahami silahkan menghubungi pusat pelayanan lanjutan. </p>";
+        
+        if (array_key_exists('cetak',$_POST))
         {
-          $data['output'] = "<h1 class='display-3'>Data Kurang Lengkap</h1> <p class='lead'><strong>Silahkan periksa kembali data yang diinput. </p>";
-          $data['button'] = "<a class='btn btn-primary btn-sm' href=" . base_url() . "dbwp/tambah" .  "role='button'> Pendaftaran Baru</a> <a class='btn btn-primary btn-sm' href=" . base_url() . "Dashboard" . "role='button'>Menu Utama</a>";
-        }    
-        else
+           if(!$this->Dbwp_model->input_data($datas,'data_wp'))
+          {
+            $data['output'] = $outputf;
+            $data['button'] = $buttonf;
+          }    
+          else
+          {
+            $this->cetak($datas);
+            $data['button'] = $outputs;
+            $data['output'] = $buttons;
+          }
+        }
+        if(array_key_exists('simpan', $_POST))
         {
-          $data['button'] = "<a class='btn btn-primary btn-sm' href=" . base_url() . "dbwp/tambah" .  "role='button'> Pendaftaran Baru</a> <a class='btn btn-primary btn-sm' href=" . base_url() . "Dashboard" . "role='button'>Menu Utama</a>";
-          $data['output'] = "<h1 class='display-3'>Terima Kasih!</h1> <p class='lead'><strong>Selamat Melayani.</strong> Untuk Info yang belum anda pahami silahkan menghubungi pusat pelayanan lanjutan. </p>";
+          if(!$this->Dbwp_model->input_data($datas,'data_wp'))
+          {
+            $data['output'] = $outputf;
+            $data['button'] = $buttonf;          }    
+          else
+          {
+            $data['button'] = $outputs;
+            $data['output'] = $buttons;
+          }
+
         }
         return $this->load->view('Simpan',$data);
 
       }
      public function edit($no_layan)
      {
-        if($this->is_logged_in)
+        if($this->is_logged_in())
         {
           $where = array('no_layan' => $no_layan);
           $data['datawp'] = $this->Dbwp_model->edit_data($where,'data_wp')->result();
@@ -137,6 +205,7 @@ class Dbwp extends MY_Controller
         $nama       = $this->input->post('nama');
         $alamat     = $this->input->post('alamat');
         $kota       = $this->input->post('kota');
+        $kecamatan  = $this->input->post('kec');
         $kodepos    = $this->input->post('kodepos');
         $nohp       = $this->input->post('phone');
         $no_pel     = $this->input->post('no_pel');
@@ -147,25 +216,51 @@ class Dbwp extends MY_Controller
           'nama'      => $nama,
           'alamat'    => $alamat,
           'kota'      => $kota,
+          'kecamatan' => $kecamatan,
           'kodepos'   => $kodepos,
           'nohp'      => $nohp,
           'no_pel'    => $no_pel,
           'date'      => $date
         );
 
-        $where = array('no_layan' => $no_layan);
-        if(!$this->Dbwp_model->update_data($where,$data,'data_wp'))
+        $outputs = "<h1 class='display-3'>Terima Kasih!</h1> <p class='lead'><strong>Selamat Melayani.</strong> Untuk Info yang belum anda pahami silahkan menghubungi pusat pelayanan lanjutan. </p>";
+        $buttons = "<a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "dbwp/tambah" .  "> Pendaftaran Baru</a> <a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "Dashboard" . ">Menu Utama</a>";
+        $outputf ="<h1 class='display-3'>Data Kurang Lengkap</h1> <p class='lead'><strong>Silahkan periksa kembali data yang diinput. </p>";
+        $buttonf = "<a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "dbwp/tambah" .  "> Pendaftaran Baru</a> <a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "Dashboard" . ">Menu Utama</a> <a class='btn btn-primary btn-sm' href=". base_url() . "dbwp/" . "edit/" . $no_layan . " role='button'>Input Ulang</a>";
+        if(array_key_exists('cetak', $_POST))
         {
-          $data['output'] = "<h1 class='display-3'>Data Kurang Lengkap</h1> <p class='lead'><strong>Silahkan periksa kembali data yang diinput. </p>";
-            $data['button'] = "<a class='btn btn-primary btn-sm' href=" . base_url() . "dbwp/tambah" .  "role='button'> Pendaftaran Baru</a> <a class='btn btn-primary btn-sm' href=" . base_url() . "Dashboard" . "role='button'>Menu Utama</a> <a class='btn btn-primary btn-sm' href=". base_url() . "dbwp/" . "edit/" . $no_layan . " role='button'>Input Ulang</a>";
-        }    
-        else
+            $where = array('no_layan' => $no_layan);
+            if(!$this->Dbwp_model->update_data($where,$data,'data_wp'))
+            {
+              $this->cetak($data);
+              $data['button'] = $buttons;
+              $data['output'] = $outputs;
+            }
+            else
+            {
+              $data['output'] = $outputf;
+              $data['button'] = $buttonf;
+            } 
+
+        }
+        if(array_key_exists('simpan', $_POST))
         {
-          $data['button'] = "<a class='btn btn-primary btn-sm' href=" . base_url() . "dbwp/tambah" .  "role='button'> Pendaftaran Baru</a>< a class='btn btn-primary btn-sm' href=" . base_url() . "Dashboard" . "role='button'>Menu Utama</a>";
-          $data['output'] = "<h1 class='display-3'>Terima Kasih!</h1> <p class='lead'><strong>Selamat Melayani.</strong> Untuk Info yang belum anda pahami silahkan menghubungi pusat pelayanan lanjutan. </p>";
+            $where = array('no_layan' => $no_layan);
+            if(!$this->Dbwp_model->update_data($where,$data,'data_wp'))
+            {
+              $data['button'] = $buttons;
+              $data['output'] = $outputs;
+            }
+            else
+            {
+              $data['output'] = $outputf;
+              $data['button'] = $buttonf;
+            } 
+
         }
         return $this->load->view('Simpan',$data);
-     }
+      }
+
 
 }
 ?>
