@@ -12,8 +12,9 @@ class Dbwp extends MY_Controller
     }
 
      public function index()
-     {
-          if($this->session->userdata('level') == TRUE)
+     {    
+          #cek user login
+          if($this->is_logged_in())
           {
             $this->load->view("Dbwp", array());
           }          
@@ -31,11 +32,11 @@ class Dbwp extends MY_Controller
           $start = intval($this->input->get("start"));
           $length = intval($this->input->get("length"));
 
-
+          #get data wp
           $data_wp = $this->Dbwp_model->getdata_wp();
 
           $data = array();
-
+          #inisialisasi data untuk ditampilkan
           foreach($data_wp->result() as $r) {
 
                $data[] = array(
@@ -47,7 +48,8 @@ class Dbwp extends MY_Controller
                     $r->nohp,
                     $r->no_pel,
                     $r->date,
-                    $r->edit = "<center><a href=" . base_url() . "dbwp/" . "edit/" . $r->no_layan . ">edit</a></center>"
+                    $r->edit = "<center><a href=" . base_url() . "dbwp/" . "edit/" . $r->no_layan . ">Edit</a></center>",
+                    $r->cetak = " <center><a href=" . base_url() . "dbwp/" . "menucetak/" . $r->no_layan . ">Cetak</a></center>"
 
                 );
           }
@@ -63,8 +65,9 @@ class Dbwp extends MY_Controller
      }
      public function tambah()
      {
-        if($this->session->userdata('level') == TRUE)
-        {
+        if($this->is_logged_in())
+        {   
+            #get data jenis pelayanan dari database
             $data['jenis_pelayanan'] = $this->Dbwp_model->jenis_pelayanan();
             $this->load->view('Tambah',$data);
         }
@@ -75,10 +78,43 @@ class Dbwp extends MY_Controller
 
      }
 
+     public function menucetak($no_layan)
+     {
+        if($this->is_logged_in())
+        {
+          $where = array('no_layan' => $no_layan);
+          #get data wp sesuai id
+          $data = $this->Dbwp_model->edit_data($where,'data_wp')->result();
+          #inisialisasi data yang akan dicetak
+          $datas = array();
+          foreach ($data as $datas)
+          {
+            $datas = array
+            (
+              'no_layan'  => $datas->no_layan,
+              'nama'      => $datas->nama,
+              'alamat'    => $datas->alamat,
+              'nohp'      => $datas->nohp,
+              'kota'      => $datas->kota,
+              'kecamatan'  => $datas->kecamatan,
+              'kodepos'   => $datas->kodepos,
+              'no_pel'    => $datas->no_pel,
+              'date'      => $datas->date
+            );
+          }
+          #cetak data
+          $this->cetak($datas);
+          redirect('Dbwp');
+        }
+        else
+        {
+          redirect('Login');
+        }
+     }
      private function cetak($data=[])
      {
 
-          
+          #inistialisasi data yang akan dicetak
           $items = array 
           (
             new Item ('Nama', $data['nama']),
@@ -91,9 +127,12 @@ class Dbwp extends MY_Controller
             new Item ('Tanggal', $data['date'])
           );
 
+          #konek ke printer
           $connector = new CupsPrintConnector("Receiptprinter");
           $printer = new Printer($connector);
+          #set tulisan tengah
           $printer -> setJustification(Printer::JUSTIFY_CENTER);
+          #set font kecil
           $printer -> selectPrintMode(Printer::MODE_FONT_B);
           $printer -> setEmphasis(true);
           $printer -> text('PBB-P2 KUTAI TIMUR');
@@ -148,11 +187,13 @@ class Dbwp extends MY_Controller
             'date'      => $date
         );
 
+        #output untuk view sesuai dengan kondisi 
         $outputf = "<h1 class='display-3'>Data Kurang Lengkap</h1> <p class='lead'><strong>Silahkan periksa kembali data yang diinput. </p>";
         $buttonf = "<a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "dbwp/tambah" .  "> Pendaftaran Baru</a> <a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "Dashboard" . ">Menu Utama</a>";
         $outputs = "<a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "dbwp/tambah" .  "> Pendaftaran Baru</a> <a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "Dashboard" . ">Menu Utama</a>";
         $buttons = "<h1 class='display-3'>Terima Kasih!</h1> <p class='lead'><strong>Selamat Melayani.</strong> Untuk Info yang belum anda pahami silahkan menghubungi pusat pelayanan lanjutan. </p>";
         
+        #cek button yang diklik user berikut aksi sesuai button yang diklik
         if (array_key_exists('cetak',$_POST))
         {
            if(!$this->Dbwp_model->input_data($datas,'data_wp'))
@@ -188,6 +229,7 @@ class Dbwp extends MY_Controller
         if($this->is_logged_in())
         {
           $where = array('no_layan' => $no_layan);
+          #get data wp sesuai id
           $data['datawp'] = $this->Dbwp_model->edit_data($where,'data_wp')->result();
           $data['jenis_pelayanan'] = $this->Dbwp_model->jenis_pelayanan();
           $this->load->view('Editwp',$data); 
@@ -211,6 +253,7 @@ class Dbwp extends MY_Controller
         $no_pel     = $this->input->post('no_pel');
         $date = date('Y-m-d H:i:s');
 
+        #inistialisasi daata yang akan di insert ke database
         $data = array
         (
           'nama'      => $nama,

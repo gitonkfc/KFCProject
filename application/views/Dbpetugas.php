@@ -1,10 +1,14 @@
 <div id="content">
   <div id="content-header">
-    <div id="breadcrumb"> <a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a href="#" class="current">Tables</a> </div>
-    <h1>Database Petugas</h1>
+    <div id="breadcrumb"> <a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a href="#" class="current">Database Petugas</a> </div>
+    <h1 align="center">Database Petugas</h1>
   </div>
+
+
   <div class="container-fluid">
+
     <hr>
+    <?php echo $regpetugas;?>
     <div class="row-fluid">
       <div class="span12">
         <div class="widget-box">
@@ -12,6 +16,7 @@
           <h5>Data Petugas</h5>
         </div>
         <div class="widget-content nopadding">
+
           <table id="petugas" class="table table-bordered table-striped">
             <thead>
               <tr>

@@ -24,6 +24,7 @@
                   <th>Jenis Pelayanan</th>
                   <th>Tanggal Pelayanan</th>
                   <th>Edit</th>
+                  <th>Cetak</th>
                 </tr>
               </thead>
               <tbody></tbody>
@@ -47,4 +48,4 @@ $(document).ready(function() {
     });
 });
 </script>
-<? $this->load->view('template/Footer');?>
+<?php $this->load->view('template/Footer');?>

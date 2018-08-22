@@ -24,5 +24,28 @@ class MY_Controller extends CI_Controller
             $user = $this->session->userdata('nama_u');
             return isset($user);
         }
+    public function is_manager()
+    {
+        if($this->session->userdata('level') == 'manager')
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public function is_karyawan()
+    {
+        if($this->session->userdata('level') == 'karyawan')
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
 }

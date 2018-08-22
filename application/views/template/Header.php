@@ -11,7 +11,7 @@
 		<link rel="stylesheet" href="<?php echo base_url(). 'assets/css/matrix-style.css'?>" />
 		<link rel="stylesheet" href="<?php echo base_url(). 'assets/css/matrix-media.css'?>" />
 		<!-- <link rel=""<?php echo base_url(). 'stylesheet" href="assets/css/default.css'?>" /> -->
-		<link href=""<?php echo base_url(). 'assets/css/font-awesome.css" rel="stylesheet'?>" />
+		<link href="<?php echo base_url(). 'assets/css/font-awesome.css" rel="stylesheet'?>" />
 		<link rel="stylesheet" href="<?php echo base_url(). 'assets/css/buttons.css'?>" />
 		<link rel="stylesheet" href="<?php echo base_url(). 'assets/css/styles.css'?>" />
 		<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
@@ -19,13 +19,12 @@
 	</head>
 	<body>
 		<div id="header">
-			<h1><a href="dashboard.html">PBB-P2 KUTAI TIMUR</a></h1>
+			<h1><a href="<?php echo base_url(). 'Dashboard'?>">PBB-P2 KUTAI TIMUR</a></h1>
 		</div>
 		<div id="user-nav" class="navbar navbar-inverse">
 			<ul class="nav">
-				<li class="dropdown" id="profile-messages"><a title="" href="#" data-toggle="dropdown" data-target="#profile-messages" class="dropdown-toggle"><i class="icon icon-user"></i>  <span class="text">Welcome</span><b class="caret"></b></a>
+				<li id="profile-messages"><a title="" href="#" data-target="#profile-messages"><i class="icon icon-user"></i>  <span class="text">Welcome <?php echo $this->session->userdata('nama_u');?></span><b class="caret"></b></a>
 			</li>
-			<li class=""><a title="" href="#"><i class="icon icon-cog"></i> <span class="text">Pengaturan</span></a></li>
 			<li class=""><a href="<?php echo base_url(). 'login/logout'?>"><i class="icon icon-share-alt"></i> <span class="text">Logout</span></a></li>
 		</ul>
 	</div>
