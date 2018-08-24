@@ -13,15 +13,8 @@ class Dbwp extends MY_Controller
 
      public function index()
      {    
-          #cek user login
-          if($this->is_logged_in())
-          {
+
             $this->load->view("Dbwp", array());
-          }          
-          else
-          {
-            $this->load->view('Login');
-          }
      }
 
      public function data_wp()
@@ -65,23 +58,13 @@ class Dbwp extends MY_Controller
      }
      public function tambah()
      {
-        if($this->is_logged_in())
-        {   
             #get data jenis pelayanan dari database
             $data['jenis_pelayanan'] = $this->Dbwp_model->jenis_pelayanan();
             $this->load->view('Tambah',$data);
-        }
-        else
-        {
-            redirect('Login');
-        }
-
      }
 
      public function menucetak($no_layan)
      {
-        if($this->is_logged_in())
-        {
           $where = array('no_layan' => $no_layan);
           #get data wp sesuai id
           $data = $this->Dbwp_model->edit_data($where,'data_wp')->result();
@@ -105,11 +88,6 @@ class Dbwp extends MY_Controller
           #cetak data
           $this->cetak($datas);
           redirect('Dbwp');
-        }
-        else
-        {
-          redirect('Login');
-        }
      }
      private function cetak($data=[])
      {
@@ -226,19 +204,11 @@ class Dbwp extends MY_Controller
       }
      public function edit($no_layan)
      {
-        if($this->is_logged_in())
-        {
           $where = array('no_layan' => $no_layan);
           #get data wp sesuai id
           $data['datawp'] = $this->Dbwp_model->edit_data($where,'data_wp')->result();
           $data['jenis_pelayanan'] = $this->Dbwp_model->jenis_pelayanan();
           $this->load->view('Editwp',$data); 
-        }
-        else
-        {
-          redirect('Login');
-        }
-
 
      }
      public function update()

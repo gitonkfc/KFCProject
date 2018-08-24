@@ -11,9 +11,6 @@ class Dbpetugas extends MY_Controller
 
      public function index()
      {    #cek user login
-          if($this->is_logged_in())
-          {
-            #cek level user
             if($this->is_manager())
             {   #visibility register petugas button
                 $data['regpetugas'] = "<a href =" . base_url() . "Dbpetugas/Register_petugas" . "/><button class='btn btn-primary' style='float:right'>Registrasi Petugas</button></a>";
@@ -24,12 +21,6 @@ class Dbpetugas extends MY_Controller
                 $data['regpetugas'] = "";
                 $this->load->view("Dbpetugas", $data);
             }
-
-          }          
-          else
-          {
-            redirect('Login');
-          }
      }
 
      public function data_petugas()
@@ -44,31 +35,29 @@ class Dbpetugas extends MY_Controller
             if($this->is_manager())
             { 
               #get semua data petugas
-              $data_petugas = $this->Dbpetugas_model->getdata_petugas();
+              $data_petugas = $this->Dbpetugas_model->get_join('user','printer','user.id_akun=printer.id_akun');
             }
             elseif ($this->is_karyawan()) 
             { 
               #get data petugas sesuai id petugas
-              $where = array('nama_depan' => $this->session->userdata('nama_u'));
-              $data_petugas = $this->Dbpetugas_model->getdata_petugas_byname($where,'user');
+              $id = $this->session->userdata('id_akun');
+              $data_petugas = $this->Dbpetugas_model->get_join_where('user','printer','user.id_akun=printer.id_akun','user.id_akun',$id);
             }
 
-
-            $data = array();
-
-            foreach($data_petugas->result() as $r) 
-            {
-              #inisialisasi data petugas
-              $data[] = array(
+              $data = array();
+              foreach($data_petugas->result() as $r) 
+              {
+                #inisialisasi data petugas
+                $data[] = array(
                     $r->nama_depan,
                     $r->nama_belakang,
                     $r->username,
                     $r->level,
                     $r->nip,
+                    $r->nama_printer,
                     $r->edit = "<center><a href=" . base_url() . "dbpetugas/" . "edit/" . $r->id_akun . ">edit</a></center>"
                 );
-            }
-
+              }
 
             $output = array(
                "draw" => $draw,
@@ -84,16 +73,21 @@ class Dbpetugas extends MY_Controller
      }
      public function edit($id)
      {
-        if($this->is_logged_in())
+        if($this->is_manager())
         {
           #get data by id petugas
           $where        = array('id_akun' => $id);
-          $data['user'] = $this->Dbpetugas_model->edit_data($where,'user')->result();
+          $data['user'] = $this->Dbpetugas_model->get_join_where('user','printer','user.id_akun=printer.id_akun','user.id_akun', $id)->result();
+          $data['selectprinter'] = "<div class='control-group'><label class='control-label'>Printer</label><div class='controls'><select name='nama_printer' class='select2 form-control custom-select'><option> Select Printer</option><option value='Receiptprinter1'>Receiptprinter1</option> <option value='Receiptprinter2'>Receiptprinter2</option><option value='Receiptprinter3'>Receiptprinter3</option><option value='Receiptprinter4'>Receiptprinter4</option></select></div>";
+          $data['selectjabatan']="<div class='control-group'><label class='control-label'>Jabatan</label> <div class='controls'><select name='level' class='select2 form-control custom-select'> <option> Select Jabatan</option> <option value='karyawan'>karyawan</option><option value='manager'>manager</option></select></div>";
           $this->load->view('Editpetugas',$data);
         }
         else
         {
-          redirect('Login');
+          $data['user'] = $this->Dbpetugas_model->edit_data($id,'user','id_akun');
+          $data['selectprinter'] = null;
+          $data['selectjabatan']="<input type='hidden' value='" . $this->session->userdata('level') . "' id='level' name='level' class='form-control'/>";
+          $this->load->view('Editpetugas',$data);
         }
      }
 
@@ -106,9 +100,10 @@ class Dbpetugas extends MY_Controller
         $password = md5($this->input->post('password'));
         $level = $this->input->post('level');
         $nip = $this->input->post('nip');
+        $printer = $this->input->post('nama_printer');
         
         #inisialisasi data untuk di insert ke database
-        $data = array(
+        $userdata = array(
             'nama_depan' => $nama_depan,
             'nama_belakang' => $nama_belakang,
             'username' => $username,
@@ -118,23 +113,45 @@ class Dbpetugas extends MY_Controller
             'nip' => $nip
         );
 
+        $printerdata = array(
+          'id_akun' => $id,
+          'nama_printer' => $printer
+        );
         $where = array
         (
           'id_akun' => $id
         );
 
         #cek input level 
-        if($level == 'karyawan' || $level == 'manager')
+        if($this->is_manager())
         {
-            $this->Dbpetugas_model->update_data($where,$data,'user');
-            $data['button'] = "<a class='btn btn-primary btn-sm' href=" . base_url() . "dbpetugas/register_petugas" .  "role='button'> Register Petugas</a> <a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "dbpetugas" . ">Daftar Petugas</a>";
-            $data['output'] = "<h1 class='display-3'>Berhasil!</h1> <p class='lead'><strong>Update data petugas berhasil. </p>";
+            $transaction = $this->Dbpetugas_model->transaction_update($id,$userdata,$printerdata);
+            if($transaction === FALSE)
+            {
+              $this->db->trans_rollback();
+              $data['output'] = "<h1 class='display-3'>Data Kurang Lengkap</h1> <p class='lead'><strong>Silahkan periksa kembali data yang diinput. </p>";
+              $data['button'] = "<a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "dbpetugas" . ">List Petugas</a> <a class='btn btn-primary btn-sm' href=". base_url() . "dbpetugas/" . "edit/" . $id . " role='button'>Input Ulang</a>";
+            }
+            else
+            {
+              $this->db->trans_commit();
+              $data['button'] = "<a class='btn btn-primary btn-sm' href=" . base_url() . "dbpetugas/register_petugas" .  "role='button'> Register Petugas</a> <a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "dbpetugas" . ">Daftar Petugas</a>";
+              $data['output'] = "<h1 class='display-3'>Berhasil!</h1> <p class='lead'><strong>Update data petugas berhasil. </p>";
+            }
+ 
         }
         else
         {
-          $data['output'] = "<h1 class='display-3'>Data Kurang Lengkap</h1> <p class='lead'><strong>Silahkan periksa kembali data yang diinput. </p>";
-          $data['button'] = "<a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "dbpetugas" . ">List Petugas</a> <a class='btn btn-primary btn-sm' href=". base_url() . "dbpetugas/" . "edit/" . $id . " role='button'>Input Ulang</a>";
-
+          if(!$this->Dbpetugas_model->update_data($where,$userdata,'user'))
+          {
+              $data['output'] = "<h1 class='display-3'>Data Kurang Lengkap</h1> <p class='lead'><strong>Silahkan periksa kembali data yang diinput. </p>";
+              $data['button'] = "<a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "dbpetugas" . ">List Petugas</a> <a class='btn btn-primary btn-sm' href=". base_url() . "dbpetugas/" . "edit/" . $id . " role='button'>Input Ulang</a>"; 
+          }
+          else
+          {
+              $data['button'] = "<a class='btn btn-primary btn-sm' href=" . base_url() . "dbpetugas/register_petugas" .  "role='button'> Register Petugas</a> <a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "dbpetugas" . ">Daftar Petugas</a>";
+              $data['output'] = "<h1 class='display-3'>Berhasil!</h1> <p class='lead'><strong>Update data petugas berhasil. </p>";  
+          }
         }
 
         return $this->load->view('Simpan',$data);
@@ -150,35 +167,48 @@ class Dbpetugas extends MY_Controller
       {
         redirect('Dashboard');
       }
-      else
-      {
-        redirect('Login');
-      }
      }
      public function simpan_petugas()
      {
-        $data = $this->Dbpetugas_model->get_last_iduser();
-        $no_l = $data['0']['maxKode'];
-        $id_akun = $no_l + 1;
-        $nama_depan = $this->input->post('nama_depan');
-        $nama_belakang = $this->input->post('nama_belakang');
-        $username = $this->input->post('username');
-        $password = md5($this->input->post('password'));
-        $level = $this->input->post('level');
-        $nip = $this->input->post('nip');
+        $data             = $this->Dbpetugas_model->get_last_iduser();
+        $no_l             = $data['0']['maxKode'];
+        $id_akun          = $no_l + 1;
+        $nama_depan       = $this->input->post('nama_depan');
+        $nama_belakang    = $this->input->post('nama_belakang');
+        $username         = $this->input->post('username');
+        $password         = md5($this->input->post('password'));
+        $level            = $this->input->post('level');
+        $nip              = $this->input->post('nip');
+        $printer          = $this->input->post('nama_printer');
  
-        $data = array(
-            'nama_depan' => $nama_depan,
-            'nama_belakang' => $nama_belakang,
-            'username' => $username,
-            'level' => $level,
-            'password' => $password,
-            'id_akun' => $id_akun,
-            'nip' => $nip
+        $userdata = array(
+            'nama_depan'      => $nama_depan,
+            'nama_belakang'   => $nama_belakang,
+            'username'        => $username,
+            'level'           => $level,
+            'password'        => $password,
+            'id_akun'         => $id_akun,
+            'nip'             => $nip
         ); 
-        $this->Dbpetugas_model->registrasi_petugas($data,'user');
-        redirect('Dbpetugas');
-     }
+        $printerdata = array(
+          'id_akun'       => $id_akun,
+          'nama_printer'  => $printer
+        );
+        $transaction = $this->Dbpetugas_model->transaction_insert($userdata,$printerdata);
+        if($transaction === FALSE)
+        {
+          $this->db->trans_rollback();
+          $data['output'] = "<h1 class='display-3'>Data Kurang Lengkap</h1> <p class='lead'><strong>Silahkan periksa kembali data yang diinput. </p>";
+          $data['button'] = "<a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "dbpetugas" . ">List Petugas</a> <a class='btn btn-primary btn-sm' href=". base_url() . "dbpetugas/" . "edit/" . $id . " role='button'>Input Ulang</a>";
+        }
+        else
+        {
+            $this->db->trans_commit();
+            $data['button'] = "<a class='btn btn-primary btn-sm' href=" . base_url() . "dbpetugas/register_petugas" .  "role='button'> Register Petugas</a> <a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "dbpetugas" . ">Daftar Petugas</a>";
+            $data['output'] = "<h1 class='display-3'>Berhasil!</h1> <p class='lead'><strong>Update data petugas berhasil. </p>";
+        }
 
+        return $this->load->view('Simpan',$data);
+     }
 }
 ?>

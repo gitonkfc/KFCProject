@@ -40,12 +40,10 @@
                                     <input type="password" name="password" id="password" class="form-control" placeholder="Password"></textarea>
                                 </div>
                             </div>
-                            <div class="control-group">
-                                <label class="control-label">Jabatan</label>
-                                <div class="controls">
-                                    <input type="text" value="<?php echo $u->level ?>" name="level" id="level" class="form-control" placeholder="jabatan">
-                                </div>
-                            </div>
+
+                            <?php echo $selectjabatan;?>
+                            <?php echo $selectprinter;?>
+
                             <div class="control-group">
                                 <label class="control-label">Username</label>
                                 <div class="controls">

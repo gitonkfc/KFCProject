@@ -36,14 +36,29 @@
                             <div class="control-group">
                                 <label class="control-label">Password</label>
                                 <div class="controls">
-                                    <input type="text" name="password" id="password" class="form-control" placeholder="Password"></textarea>
+                                    <input type="password" name="password" id="password" class="form-control" placeholder="Password"></textarea>
                                 </div>
                             </div>
-                            <div class="control-group">
+                                                            <div class="control-group">
                                 <label class="control-label">Jabatan</label>
                                 <div class="controls">
-                                    <input type="text" name="level" id="level" class="form-control" placeholder="jabatan">
-                                </div>
+                                <select name='level' class="select2 form-control custom-select">
+                                                <option>Select Jabatan</option>
+                                                <option value="karyawan">karyawan</option>
+                                                <option value="manager">manager</option>
+                                </select>
+                            </div>
+                                 <div class="control-group">
+                                <label class="control-label">Printer</label>
+                                <div class="controls">
+                                <select name='nama_printer' class="select2 form-control custom-select">
+                                    <option> Select Printer</option>
+                                                <option value="Receiptprinter1">Receiptprinter1</option>
+                                                <option value="Receiptprinter2">Receiptprinter2</option>
+                                                <option value="Receiptprinter2">Receiptprinter3</option>
+                                                <option value="Receiptprinter3">Receiptprinter4</option>
+
+                                </select>
                             </div>
                             <div class="control-group">
                                 <label class="control-label">Username</label>

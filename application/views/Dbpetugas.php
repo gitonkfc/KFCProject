@@ -20,12 +20,13 @@
           <table id="petugas" class="table table-bordered table-striped">
             <thead>
               <tr>
-                <th>Nama Depan</th>
-                <th>Nama Belakang</th>
-                <th>Username</th>
-                <th>Petugas</th>
-                <th>NIP</th>
-                <th>Sunting Akun</th>
+               <th>Nama Depan</th>
+               <th>Nama Belakang</th>
+               <th>Username</th>
+               <th>Petugas</th>
+               <th>NIP</th>
+               <th>Printer</th>
+               <th>Sunting Akun</th>
               </tr>
             </thead>
             <tbody>
