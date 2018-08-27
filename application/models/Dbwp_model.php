@@ -37,6 +37,10 @@ class Dbwp_model extends CI_Model
         $query = $this->db->get('data_wp');
         return ($query->result_array());
     }
+    public function getw($where, $table,$column)
+    {
+        return $this->db->select('*')->where($column,$where)->get($table)->result();
+    }
 
 
 }

@@ -106,7 +106,9 @@ class Dbwp extends MY_Controller
           );
 
           #konek ke printer
-          $connector = new CupsPrintConnector("Receiptprinter");
+          $where = $this->session->userdata('id_akun');
+          $pr       = $this->Dbwp_model->getw($where,'printer','id_akun');
+          $connector = new CupsPrintConnector($pr);
           $printer = new Printer($connector);
           #set tulisan tengah
           $printer -> setJustification(Printer::JUSTIFY_CENTER);

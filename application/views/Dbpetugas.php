@@ -50,4 +50,4 @@ $(document).ready(function() {
     });
 });
 </script>
-<? $this->load->view('template/Footer');?>
+<?php $this->load->view('template/Footer');?>

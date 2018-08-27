@@ -44,6 +44,7 @@
                             <?php echo $selectjabatan;?>
                             <?php echo $selectprinter;?>
 
+
                             <div class="control-group">
                                 <label class="control-label">Username</label>
                                 <div class="controls">

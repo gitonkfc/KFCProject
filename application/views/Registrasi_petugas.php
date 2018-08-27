@@ -44,8 +44,8 @@
                                 <div class="controls">
                                 <select name='level' class="select2 form-control custom-select">
                                                 <option>Select Jabatan</option>
-                                                <option value="karyawan">karyawan</option>
-                                                <option value="manager">manager</option>
+                                                <option value="karyawan">Karyawan</option>
+                                                <option value="manager">Kanager</option>
                                 </select>
                             </div>
                                  <div class="control-group">

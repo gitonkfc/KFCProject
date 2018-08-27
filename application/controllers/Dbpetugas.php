@@ -10,17 +10,16 @@ class Dbpetugas extends MY_Controller
     }
 
      public function index()
-     {    #cek user login
+     {    #cek level untuk tampiin button register petugas
             if($this->is_manager())
             {   #visibility register petugas button
                 $data['regpetugas'] = "<a href =" . base_url() . "Dbpetugas/Register_petugas" . "/><button class='btn btn-primary' style='float:right'>Registrasi Petugas</button></a>";
-                $this->load->view("Dbpetugas", $data);
             }
             elseif($this->is_karyawan())
             {
                 $data['regpetugas'] = "";
-                $this->load->view("Dbpetugas", $data);
             }
+            $this->load->view("Dbpetugas", $data);
      }
 
      public function data_petugas()
@@ -36,6 +35,7 @@ class Dbpetugas extends MY_Controller
             { 
               #get semua data petugas
               $data_petugas = $this->Dbpetugas_model->get_join('user','printer','user.id_akun=printer.id_akun');
+
             }
             elseif ($this->is_karyawan()) 
             { 
@@ -43,20 +43,35 @@ class Dbpetugas extends MY_Controller
               $id = $this->session->userdata('id_akun');
               $data_petugas = $this->Dbpetugas_model->get_join_where('user','printer','user.id_akun=printer.id_akun','user.id_akun',$id);
             }
-
               $data = array();
               foreach($data_petugas->result() as $r) 
               {
                 #inisialisasi data petugas
-                $data[] = array(
-                    $r->nama_depan,
-                    $r->nama_belakang,
-                    $r->username,
-                    $r->level,
-                    $r->nip,
-                    $r->nama_printer,
-                    $r->edit = "<center><a href=" . base_url() . "dbpetugas/" . "edit/" . $r->id_akun . ">edit</a></center>"
-                );
+                if($this->is_manager())
+                {
+                    $data[] = array(
+                      $r->nama_depan,
+                      $r->nama_belakang,
+                      $r->username,
+                      $r->level,
+                      $r->nip,
+                      $r->nama_printer,
+                      $r->edit = "<center><a href=" . base_url() . "dbpetugas/" . "edit/" . $r->id_akun . ">Edit</a></center> <center><a href=" . base_url() . "dbpetugas/" . "delete/" . $r->id_akun . ">Delete</a></center>"
+                  );
+                }
+                elseif($this->is_karyawan())
+                {
+                    $data[] = array(
+                      $r->nama_depan,
+                      $r->nama_belakang,
+                      $r->username,
+                      $r->level,
+                      $r->nip,
+                      $r->nama_printer,
+                      $r->edit = "<center><a href=" . base_url() . "dbpetugas/" . "edit/" . $r->id_akun . ">Edit</a></center>"
+                    );
+                }
+
               }
 
             $output = array(
@@ -71,24 +86,85 @@ class Dbpetugas extends MY_Controller
          
 
      }
+     public function delete($id)
+     {
+        if($this->is_manager())
+        {
+          $data['user'] = $this->Dbpetugas_model->get_join_where('user','printer','user.id_akun=printer.id_akun','user.id_akun', $id)->result();
+          foreach($data['user'] as $u)
+          {
+            $user = $u->nama_depan;
+          }
+          $data['output'] = "<h1 class='display-3' align='center'>Konfirmasi Hapus Data Petugas</h1> <p class='lead' align='center'><strong> Apakah anda yakin ingin menghapus data " . $user . "</p>";
+          $data['button'] = "<center><a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "dbpetugas/confirmdelete/" .  $id . "> Hapus Petugas</a> <a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "dbpetugas" . ">Daftar Petugas</a></center>";
+          $this->load->view('Simpan',$data);
+        }
+        else
+        {
+          redirect('Dbpetugas');
+        }
+     }
+     public function confirmdelete($id)
+     {
+        if($this->is_manager())
+        {
+            $transaction = $this->Dbpetugas_model->transaction_delete($id);
+            if($transaction === FALSE)
+            {
+              $this->db->trans_rollback();
+              $data['output'] = "<h1 class='display-3' align='center'>Kesalahan Database</h1> <p class='lead' align='center'><strong>Silahkan hubungi administrator</p>";
+              $data['button'] = null;
+            }
+            else
+            {
+              $this->db->trans_commit();
+              $data['button'] = "<center><a class='btn btn-primary btn-sm' href=" . base_url() . "dbpetugas/register_petugas" .  "role='button'> Register Petugas</a> <a class='btn btn-primary btn-sm' role='button' href=" . base_url() . "dbpetugas" . ">Daftar Petugas</a></center>";
+              $data['output'] = "<h1 class='display-3' align='center'>Berhasil</h1> <p class='lead' align='center'><strong>Penghapusan data petugas berhasil</p>";
+            }
+            $this->load->view('Simpan',$data);
+        }
+        else
+        {
+          redirect('Dbpetugas');
+        }
+     }
      public function edit($id)
      {
         if($this->is_manager())
         {
-          #get data by id petugas
-          $where        = array('id_akun' => $id);
+          #get data by id petugas          
           $data['user'] = $this->Dbpetugas_model->get_join_where('user','printer','user.id_akun=printer.id_akun','user.id_akun', $id)->result();
-          $data['selectprinter'] = "<div class='control-group'><label class='control-label'>Printer</label><div class='controls'><select name='nama_printer' class='select2 form-control custom-select'><option> Select Printer</option><option value='Receiptprinter1'>Receiptprinter1</option> <option value='Receiptprinter2'>Receiptprinter2</option><option value='Receiptprinter3'>Receiptprinter3</option><option value='Receiptprinter4'>Receiptprinter4</option></select></div>";
-          $data['selectjabatan']="<div class='control-group'><label class='control-label'>Jabatan</label> <div class='controls'><select name='level' class='select2 form-control custom-select'> <option> Select Jabatan</option> <option value='karyawan'>karyawan</option><option value='manager'>manager</option></select></div>";
-          $this->load->view('Editpetugas',$data);
+          foreach($data['user'] as $u)
+          {
+            $level    = $u->level;
+            $printer  = $u->nama_printer;
+          }
+          
+          $levellist      = array
+          (
+            'karyawan' => 'Karyawan',
+            'manager' => 'Manager'
+          );
+
+          $printerlist    = array
+          (
+            'Receiptprinter1' => 'Receiptprinter1', 
+            'Receiptprinter2' => 'Receiptprinter2', 
+            'Receiptprinter3' => 'Receiptprinter3', 
+            'Receiptprinter4' => 'Receiptprinter4'
+          );
+          #form dropdown with selected
+          $data['selectjabatan'] = "<div class='control-group'><label class='control-label'>Jabatan</label><div class='controls'>" . form_dropdown('level', $levellist, $level) ."</div>";
+          $data['selectprinter'] = "<div class='control-group'><label class='control-label'>Jabatan</label><div class='controls'>" . form_dropdown('nama_printer', $printerlist, $printer) ."</div>";
         }
         else
         {
-          $data['user'] = $this->Dbpetugas_model->edit_data($id,'user','id_akun');
-          $data['selectprinter'] = null;
-          $data['selectjabatan']="<input type='hidden' value='" . $this->session->userdata('level') . "' id='level' name='level' class='form-control'/>";
-          $this->load->view('Editpetugas',$data);
+          $data['user']             = $this->Dbpetugas_model->edit_data($id,'user','id_akun');
+          $data['selectprinter']    = null;
+          $data['selectjabatan']    = form_hidden('level', $this->session->userdata('level'));
+
         }
+        $this->load->view('Editpetugas',$data);
      }
 
      public function update()
@@ -104,27 +180,28 @@ class Dbpetugas extends MY_Controller
         
         #inisialisasi data untuk di insert ke database
         $userdata = array(
-            'nama_depan' => $nama_depan,
-            'nama_belakang' => $nama_belakang,
-            'username' => $username,
-            'level' => $level,
-            'password' => $password,
-            'id_akun' => $id,
-            'nip' => $nip
+            'nama_depan'        => $nama_depan,
+            'nama_belakang'     => $nama_belakang,
+            'username'          => $username,
+            'level'             => $level,
+            'password'          => $password,
+            'id_akun'           => $id,
+            'nip'               => $nip
         );
 
         $printerdata = array(
-          'id_akun' => $id,
-          'nama_printer' => $printer
+          'id_akun'       => $id,
+          'nama_printer'  => $printer
         );
         $where = array
         (
           'id_akun' => $id
         );
 
-        #cek input level 
+        #cek level
         if($this->is_manager())
         {
+            #input query join table user dan printer
             $transaction = $this->Dbpetugas_model->transaction_update($id,$userdata,$printerdata);
             if($transaction === FALSE)
             {
@@ -142,6 +219,7 @@ class Dbpetugas extends MY_Controller
         }
         else
         {
+          #input table user oleh karyawan
           if(!$this->Dbpetugas_model->update_data($where,$userdata,'user'))
           {
               $data['output'] = "<h1 class='display-3'>Data Kurang Lengkap</h1> <p class='lead'><strong>Silahkan periksa kembali data yang diinput. </p>";
@@ -194,6 +272,7 @@ class Dbpetugas extends MY_Controller
           'id_akun'       => $id_akun,
           'nama_printer'  => $printer
         );
+        #insert query join table user dan printer
         $transaction = $this->Dbpetugas_model->transaction_insert($userdata,$printerdata);
         if($transaction === FALSE)
         {

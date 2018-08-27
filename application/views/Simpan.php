@@ -7,9 +7,9 @@
     <!--Action boxes-->
     <div class="container-fluid">
         <div class="jumbotron text-xs-center">
-            <?php print_r($output);?>
+            <?php echo $output;?>
             <p class="lead">
-                <?php print_r ($button);?>
+                <?php echo $button?>
 
             </p>
 <?php $this->load->view('template/Footer');?>
