@@ -41,9 +41,8 @@ class Dbwp extends MY_Controller
                     $r->nohp,
                     $r->no_pel,
                     $r->date,
-                    $r->edit = "<center><a href=" . base_url() . "dbwp/" . "edit/" . $r->no_layan . ">Edit</a></center>",
-                    $r->cetak = " <center><a href=" . base_url() . "dbwp/" . "menucetak/" . $r->no_layan . ">Cetak</a></center>"
-
+                    $r->edit = "<center><button class='btn btn-info btn-mini'><span class='glyphicon glyphicon-edit'><a href=" . base_url() . "dbwp/" . "edit/" . $r->no_layan . ">Edit</a></button></center>",
+                    $r->cetak = " <center><button class='btn btn-info btn-mini'><span class='glyphicon glyphicon-print'><a href=" . base_url() . "dbwp/" . "menucetak/" . $r->no_layan . ">Cetak</a></button></center>"
                 );
           }
 
