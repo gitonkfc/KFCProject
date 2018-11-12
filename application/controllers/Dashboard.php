@@ -20,4 +20,5 @@ class Dashboard extends MY_Controller
     }
     $this->load->view('Dashboard',$data);
   }
+  
 }
