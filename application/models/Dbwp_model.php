@@ -39,7 +39,7 @@ class Dbwp_model extends CI_Model
     }
     public function getw($where, $table,$column)
     {
-        return $this->db->select('*')->where($column,$where)->get($table)->result();
+        return $this->db->select('*')->where($column,$where)->get($table)->row_array();
     }
 
 

@@ -1,0 +1,1 @@
+<?php print_r($pr['nama_printer']);?>

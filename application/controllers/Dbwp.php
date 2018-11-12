@@ -1,7 +1,9 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\Item;
 use Mike42\Escpos\PrintConnectors\CupsPrintConnector;
+
 class Dbwp extends MY_Controller
 {
 
@@ -91,7 +93,7 @@ class Dbwp extends MY_Controller
      private function cetak($data=[])
      {
 
-          #inistialisasi data yang akan dicetak
+         #inistialisasi data yang akan dicetak
           $items = array 
           (
             new Item ('Nama', $data['nama']),
@@ -107,7 +109,7 @@ class Dbwp extends MY_Controller
           #konek ke printer
           $where = $this->session->userdata('id_akun');
           $pr       = $this->Dbwp_model->getw($where,'printer','id_akun');
-          $connector = new CupsPrintConnector($pr);
+          $connector = new CupsPrintConnector($pr['nama_printer']);
           $printer = new Printer($connector);
           #set tulisan tengah
           $printer -> setJustification(Printer::JUSTIFY_CENTER);
@@ -139,31 +141,31 @@ class Dbwp extends MY_Controller
      }
      public function simpan()
      {
-        $data = $this->Dbwp_model->get_last_nolayan();
-        $no_l = $data['0']['maxKode'];
-        $no_u = $no_l + 1;
-        $no_t = (int) substr($no_u, 0, 3);
-        $kode_layan = sprintf("%03s", $no_t);
-        $name = $this->input->post('nama');
-        $alamat = $this->input->post('alamat');
-        $phone = $this->input->post('phone');
-        $kota = $this->input->post('kota');
-        $kecamatan = $this->input->post('kec');
-        $kodepos = $this->input->post('kodepos');
-        $no_pel = $this->input->post('no_pel');
-        $date = date('Y-m-d H:i:s');
+        $data           = $this->Dbwp_model->get_last_nolayan();
+        $no_l           = $data['0']['maxKode'];
+        $no_u           = $no_l + 1;
+        $no_t           = (int) substr($no_u, 0, 3);
+        $kode_layan     = sprintf("%03s", $no_t);
+        $name           = $this->input->post('nama');
+        $alamat         = $this->input->post('alamat');
+        $phone          = $this->input->post('phone');
+        $kota           = $this->input->post('kota');
+        $kecamatan      = $this->input->post('kec');
+        $kodepos        = $this->input->post('kodepos');
+        $no_pel         = $this->input->post('no_pel');
+        $date           = date('Y-m-d H:i:s');
 
         $datas = array
         (
-            'no_layan'  => $kode_layan,
-            'nama'      => $name,
-            'alamat'    => $alamat,
-            'nohp'      => $phone,
-            'kota'      => $kota,
-            'kecamatan'  => $kecamatan,
-            'kodepos'   => $kodepos,
-            'no_pel'    => $no_pel,
-            'date'      => $date
+            'no_layan'    => $kode_layan,
+            'nama'        => $name,
+            'alamat'      => $alamat,
+            'nohp'        => $phone,
+            'kota'        => $kota,
+            'kecamatan'   => $kecamatan,
+            'kodepos'     => $kodepos,
+            'no_pel'      => $no_pel,
+            'date'        => $date
         );
 
         #output untuk view sesuai dengan kondisi 
@@ -206,9 +208,11 @@ class Dbwp extends MY_Controller
      public function edit($no_layan)
      {
           $where = array('no_layan' => $no_layan);
+
           #get data wp sesuai id
-          $data['datawp'] = $this->Dbwp_model->edit_data($where,'data_wp')->result();
-          $data['jenis_pelayanan'] = $this->Dbwp_model->jenis_pelayanan();
+          $data['datawp']           = $this->Dbwp_model->edit_data($where,'data_wp')->result();
+          $data['jenis_pelayanan']  = $this->Dbwp_model->jenis_pelayanan();
+
           $this->load->view('Editwp',$data); 
 
      }

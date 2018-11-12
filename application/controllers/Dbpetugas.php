@@ -31,24 +31,16 @@ class Dbpetugas extends MY_Controller
             $start = intval($this->input->get("start"));
             $length = intval($this->input->get("length"));
 
-            if($this->is_manager())
-            { 
-              #get semua data petugas
-              $data_petugas = $this->Dbpetugas_model->get_join('user','printer','user.id_akun=printer.id_akun');
+            $id = $this->session->userdata('id_akun');
 
-            }
-            elseif ($this->is_karyawan()) 
-            { 
-              #get data petugas sesuai id petugas
-              $id = $this->session->userdata('id_akun');
-              $data_petugas = $this->Dbpetugas_model->get_join_where('user','printer','user.id_akun=printer.id_akun','user.id_akun',$id);
-            }
+            $data_petugas = $this->is_manager() 
+                            ? $this->Dbpetugas_model->get_join('user','printer','user.id_akun=printer.id_akun') 
+                            : $this->Dbpetugas_model->get_join_where('user','printer','user.id_akun=printer.id_akun','user.id_akun',$id);
+
               $data = array();
               foreach($data_petugas->result() as $r) 
               {
                 #inisialisasi data petugas
-                if($this->is_manager())
-                {
                     $data[] = array(
                       $r->nama_depan,
                       $r->nama_belakang,
@@ -56,21 +48,9 @@ class Dbpetugas extends MY_Controller
                       $r->level,
                       $r->nip,
                       $r->nama_printer,
-                      $r->edit = "<center><a href=" . base_url() . "dbpetugas/" . "edit/" . $r->id_akun . ">Edit</a></center> <center><a href=" . base_url() . "dbpetugas/" . "delete/" . $r->id_akun . ">Delete</a></center>"
+                      $r->edit = $this->is_manager() ? "<center><a href=" . base_url() . "dbpetugas/" . "edit/" . $r->id_akun . ">Edit</a></center> <center><a href=" . base_url() . "dbpetugas/" . "delete/" . $r->id_akun . ">Delete</a></center>" : "<center><a href=" . base_url() . "dbpetugas/" . "edit/" . $r->id_akun . ">Edit</a></center>"
                   );
-                }
-                elseif($this->is_karyawan())
-                {
-                    $data[] = array(
-                      $r->nama_depan,
-                      $r->nama_belakang,
-                      $r->username,
-                      $r->level,
-                      $r->nip,
-                      $r->nama_printer,
-                      $r->edit = "<center><a href=" . base_url() . "dbpetugas/" . "edit/" . $r->id_akun . ">Edit</a></center>"
-                    );
-                }
+
 
               }
 
